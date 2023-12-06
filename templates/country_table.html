@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="m-2">
+        <h5 class="text-muted">Страны</h5>
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addModal">
+            <div style="width: 20px">
+                <img src="{% static 'media/add_icon.png' %}" class="img-fluid" alt="Responsive image">
+            </div>
+        </button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Название</th>
+            <th scope="col">Изменить</th>
+            <th scope="col">Удалить</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for country in countries %}
+            <tr>
+                <td>{{ country.country_name }}</td>
+                <td>
+                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div style="width: 20px">
+                            <img src="{% static 'media/edit_icon.png' %}" class="img-fluid" alt="Responsive image">
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="m-2" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <label>
+                                    <p>Название:</p>
+                                    <input required name="name" value={{ country.country_name }}>
+                                </label>
+                                <input type="hidden" name="id" value={{ country.id_country }}>
+                                <input type="hidden" name="change_type" value="edit">
+                                <input type="submit" value="Изменить"/>
+                            </form>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div style="width: 20px">
+                            <img src="{% static 'media/delete_icon.png' %}" class="img-fluid" alt="Responsive image">
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="m-2" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <p>Удалить запись?</p>
+                                <input type="hidden" name="id" value={{ country.id_country }}>
+                                <input type="hidden" name="change_type" value="delete">
+                                <input type="submit" value="Удалить"/>
+                            </form>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Добавить страну</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="m-2" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ countryForm.as_p }}
+                        <input type="hidden" name="change_type" value="add">
+                        <input type="submit" value="Добавить"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

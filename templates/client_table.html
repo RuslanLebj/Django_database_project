@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="m-2">
+        <h5 class="text-muted">Клиенты</h5>
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addModal">
+            <div style="width: 20px">
+                <img src="{% static 'media/add_icon.png' %}" class="img-fluid" alt="Responsive image">
+            </div>
+        </button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Имя</th>
+            <th scope="col">Фамилия</th>
+            <th scope="col">Отчество</th>
+            <th scope="col">Дата рождения</th>
+            <th scope="col">Номер телефона</th>
+            <th scope="col">Изменить</th>
+            <th scope="col">Удалить</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            <tr>
+                <td>{{ client.client_name }}</td>
+                <td>{{ client.client_surname }}</td>
+                <td>{{ client.client_patronymic }}</td>
+                <td>{{ client.client_birth }}</td>
+                <td>{{ client.client_phone }}</td>
+                <td>
+                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div style="width: 20px">
+                            <img src="{% static 'media/edit_icon.png' %}" class="img-fluid" alt="Responsive image">
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="m-2" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <label>
+                                    <p>Имя:</p>
+                                    <input required name="name" value={{ client.client_name }}>
+                                </label>
+                                <label>
+                                    <p>Фамилия:</p>
+                                    <input required name="surname" value={{ client.client_surname }}>
+                                </label>
+                                <label>
+                                    <p>Отчество:</p>
+                                    <input required name="patronymic" value={{ client.client_patronymic }}>
+                                </label>
+                                <label>
+                                    <p>Дата рождения:</p>
+                                    <input required type="date" name="birth"
+                                           value={{ client.client_birth|date:'Y-m-d' }}>
+                                </label>
+                                <label>
+                                    <p>Номер телефона:</p>
+                                    <input required name="phone" value={{ client.client_phone }}>
+                                </label>
+                                <input type="hidden" name="id" value={{ client.id_client }}>
+                                <input type="hidden" name="change_type" value="edit">
+                                <input type="submit" value="Изменить"/>
+                            </form>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div style="width: 20px">
+                            <img src="{% static 'media/delete_icon.png' %}" class="img-fluid" alt="Responsive image">
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="m-2" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <p>Удалить запись?</p>
+                                <input type="hidden" name="id" value={{ client.id_client }}>
+                                <input type="hidden" name="change_type" value="delete">
+                                <input type="submit" value="Удалить"/>
+                            </form>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Добавить клиента</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="m-2" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ clientForm.as_p }}
+                        <input type="hidden" name="change_type" value="add">
+                        <input type="submit" value="Добавить"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

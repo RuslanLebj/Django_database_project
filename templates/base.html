@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Django App</title>
+    {% load static %}
+    <link href="{% static 'bootstrap-5.3.2-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link>
+</head>
+<body>
+<div class="d-flex flex-row">
+    <div class="d-flex flex-column p-3 bg-white col-3">
+        <a href="/" class="align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+            <span class="fs-5 fw-semibold">Приложение базы данных</span>
+            <p class="fw-semibold text-muted">для учета коммерческих организаций</p>
+        </a>
+        <ul class="list-unstyled ps-0">
+            <li class="mb-1">
+                <button class="btn btn-toggle align-items-center rounded collapsed " data-bs-toggle="collapse"
+                        data-bs-target="#home-collapse" aria-expanded="false">
+                    Таблицы
+                </button>
+                <div class="collapse" id="home-collapse">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                        <li><a href="{% url 'brand_table' %}" class="link-dark rounded">Брэнды</a></li>
+                        <li><a href="{% url 'client_table' %}" class="link-dark rounded">Клиенты</a></li>
+                        <li><a href="{% url 'commercial_organization_table' %}" class="link-dark rounded">Коммерческие организации</a></li>
+                        <li><a href="{% url 'country_table' %}" class="link-dark rounded">Страны</a></li>
+                        <li><a href="{% url 'establishment_form_table' %}" class="link-dark rounded">Формы учреждения</a></li>
+                        <li><a href="{% url 'order_table' %}" class="link-dark rounded">Заказы</a></li>
+                        <li><a href="{% url 'product_table' %}" class="link-dark rounded">Товары</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="border-top my-3"></li>
+        </ul>
+    </div>
+    <div class="d-flex flex-column p-3 bg-white col-7">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div id="notification" class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+
+    </div>
+</div>
+<script src="{% static 'bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js' %}"></script>
+
+<script>
+    // Показать уведомление при загрузке страницы, если оно есть
+    window.onload = function () {
+        var notification = document.getElementById('notification');
+        if (notification !== null && notification.innerText.trim() !== "") {
+            notification.style.display = 'block';
+            // Установить таймер на скрытие уведомления через 3 секунды (3000 миллисекунд)
+            setTimeout(function () {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+    };
+</script>
+
+</body>
+</html>
+

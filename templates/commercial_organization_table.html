@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="m-2">
+        <h5 class="text-muted">Коммерческие организации</h5>
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addModal">
+            <div style="width: 20px">
+                <img src="{% static 'media/add_icon.png' %}" class="img-fluid" alt="Responsive image">
+            </div>
+        </button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Название</th>
+            <th scope="col">Ссылка</th>
+            <th scope="col">ИНН</th>
+            <th scope="col">Форма учреждения</th>
+            <th scope="col">Изменить</th>
+            <th scope="col">Удалить</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for commercial_organization in commercial_organizations %}
+            <tr>
+                <td>{{ commercial_organization.organization_name }}</td>
+                <td>{{ commercial_organization.link }}</td>
+                <td>{{ commercial_organization.tin }}</td>
+                <td>{{ commercial_organization.establishment_form }}</td>
+                <td>
+                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div style="width: 20px">
+                            <img src="{% static 'media/edit_icon.png' %}" class="img-fluid" alt="Responsive image">
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="m-2" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <label>
+                                    <p>Название:</p>
+                                    <input required name="name" value={{ commercial_organization.organization_name }}>
+                                </label>
+                                <label>
+                                    <p>Ссылка:</p>
+                                    <input required name="link" value={{ commercial_organization.link }}>
+                                </label>
+                                <label>
+                                    <p>ИНН:</p>
+                                    <input required name="tin" value={{ commercial_organization.tin }}>
+                                </label>
+                                <label>
+                                    <p>Форма учреждения:</p>
+                                    <select required name="establishment_form">
+                                        {% for establishment_form in establishment_forms %}
+                                            {% if establishment_form.form_name == commercial_organization.establishment_form %}
+                                                <option selected value="{{ establishment_form.id_establishment_form }}">
+                                                    {{ establishment_form.form_name }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ establishment_form.id_establishment_form }}">
+                                                    {{ establishment_form.form_name }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                                <input type="hidden" name="id"
+                                       value={{ commercial_organization.id_commercial_organization }}>
+                                <input type="hidden" name="change_type" value="edit">
+                                <input type="submit" value="Изменить"/>
+                            </form>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div style="width: 20px">
+                            <img src="{% static 'media/delete_icon.png' %}" class="img-fluid" alt="Responsive image">
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="m-2" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <p>Удалить запись?</p>
+                                <input type="hidden" name="id"
+                                       value={{ commercial_organization.id_commercial_organization }}>
+                                <input type="hidden" name="change_type" value="delete">
+                                <input type="submit" value="Удалить"/>
+                            </form>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Добавить коммерческую организацию</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="m-2" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ commercial_organizationForm.as_p }}
+                        <input type="hidden" name="change_type" value="add">
+                        <input type="submit" value="Добавить"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
