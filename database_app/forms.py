@@ -60,7 +60,7 @@ class EstablishmentFormForm(forms.Form):
 
 class OrderForm(forms.Form):
     address = forms.CharField(label="Адрес доставки")
-    status = forms.BooleanField(label="Статус заказа", widget=forms.CheckboxInput)
+    status = forms.BooleanField(label="Статус заказа", widget=forms.CheckboxInput, required=False)
     date = forms.DateField(label="Дата доставки", widget=forms.DateInput(attrs={'type': 'date'}))
     client = CustomTripleModelChoiceField(
         queryset=Client.objects.all(),
