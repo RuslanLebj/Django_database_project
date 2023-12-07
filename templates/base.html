@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Django App</title>
-    {% load static %}
-    <link href="{% static 'bootstrap-5.3.2-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    {% load static %} <!-- Загрузка статических файлов -->
+    {% load django_bootstrap5 %} <!-- Загрузка Bootstrap -->
+    {% bootstrap_css %} <!-- Подключение CSS Bootstrap -->
     <link>
 </head>
 <body>
@@ -50,7 +51,8 @@
 
     </div>
 </div>
-<script src="{% static 'bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js' %}"></script>
+
+{% bootstrap_javascript %} <!-- Подключение JavaScript Bootstrap -->
 
 <script>
     // Показать уведомление при загрузке страницы, если оно есть
