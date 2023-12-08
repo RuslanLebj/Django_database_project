@@ -3,12 +3,27 @@
 {% block content %}
     <div class="m-2">
         <h5 class="text-muted">Товары</h5>
+        <!-- Кнопка отрытия модального окна добавления записи -->
         <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addModal">
             <div style="width: 20px">
                 <img src="{% static 'media/add_icon.png' %}" class="img-fluid" alt="Responsive image">
             </div>
         </button>
+        <!-- Кнопка отрытия модального окна фильтрации списка -->
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#filterModal">
+            <div style="width: 20px">
+                <img src="{% static 'media/filter_icon.png' %}" class="img-fluid" alt="Responsive image">
+            </div>
+        </button>
     </div>
+
+    <!-- В случае пустого списка -->
+        {% if products|length == 0 %}
+            <div class="d-flex justify-content-center mb-1 ">
+                <h2 class="text-muted">Записей не найдено :(</h2>
+            </div>
+        {% endif %}
+
     <table class="table">
         <thead>
         <tr>
@@ -45,7 +60,7 @@
                                 </label>
                                 <label>
                                     <p>Размер товара:</p>
-                                    <input required type="number" step="any" required name="size"
+                                    <input required type="number" step="any" name="size"
                                            value={{ product.product_size }}>
                                 </label>
                                 <label>
@@ -126,6 +141,7 @@
         </tbody>
     </table>
 
+    <!-- Модальное окно добавления записи -->
     <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -139,6 +155,66 @@
                         {{ productForm.as_p }}
                         <input type="hidden" name="change_type" value="add">
                         <input type="submit" value="Добавить"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно фильтрации списка -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Отфильтровать товары</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="m-2" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label>
+                            <p>Тип товара:</p>
+                            <input name="type">
+                        </label>
+                        <label>
+                            <p>Размер товара:</p>
+                            <input type="number" step="any" name="size">
+                        </label>
+                        <label>
+                            <p>Коммерческая организация:</p>
+                            <select name="commercial_organization">
+                                <option value=""></option>
+                                {% for organization in commercial_organizations %}
+                                    <option value="{{ organization.id_commercial_organization }}">
+                                        {{ organization.organization_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label>
+                            <p>Брэнд:</p>
+                            <select name="brand">
+                                <option value=""></option>
+                                {% for brand in brands %}
+                                    <option value="{{ brand.id_brand }}">
+                                        {{ brand.brand_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label>
+                            <p>Страна:</p>
+                            <select name="country">
+                                <option value=""></option>
+                                {% for country in countries %}
+                                    <option value="{{ country.id_country }}">
+                                        {{ country.country_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <input type="hidden" name="change_type" value="filter">
+                        <input type="submit" value="Отфильтровать"/>
                     </form>
                 </div>
             </div>

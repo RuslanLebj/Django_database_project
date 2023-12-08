@@ -76,7 +76,7 @@ class OrderForm(forms.Form):
 
 class ProductForm(forms.Form):
     type = forms.CharField(label="Тип товара")
-    size = forms.FloatField(label="Размер(кг)")
+    size = forms.FloatField(label="Размер(кг)", widget=forms.NumberInput(attrs={'step': 'any'}))
     commercial_organization = CustomModelChoiceField(
         queryset=CommercialOrganization.objects.all(),
         label_field="organization_name",

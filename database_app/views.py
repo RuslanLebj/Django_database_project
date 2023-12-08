@@ -56,9 +56,27 @@ def add_brand(brand_name):
 # Товар
 def product_table(request):
     productForm = ProductForm()
+    products = Product.objects.all().order_by('id_product')
 
     if request.method == "POST":
-        if request.POST.get('change_type') == "edit":
+        if request.POST.get('change_type') == "filter":
+            filter_product_type = request.POST.get('type')
+            filter_product_size = request.POST.get('size')
+            filter_fk_id_commercial_organization = request.POST.get('commercial_organization')
+            filter_fk_id_brand = request.POST.get('brand')
+            filter_fk_id_country = request.POST.get('country')
+            if filter_product_type != "":
+                products = products.filter(product_type=filter_product_type)
+            if filter_product_size != "":
+                products = products.filter(product_size=filter_product_size)
+            if filter_fk_id_commercial_organization != "":
+                products = products.filter(fk_id_commercial_organization=filter_fk_id_commercial_organization)
+            if filter_fk_id_brand != "":
+                products = products.filter(fk_id_brand=filter_fk_id_brand)
+            if filter_fk_id_country != "":
+                products = products.filter(fk_id_country=filter_fk_id_country)
+            messages.success(request, 'Данные отфильтрованы')
+        elif request.POST.get('change_type') == "edit":
             id_product = request.POST.get('id')
             new_product_type = request.POST.get('type')
             new_product_size = request.POST.get('size')
@@ -89,7 +107,6 @@ def product_table(request):
             except IntegrityError as e:
                 messages.warning(request, 'Данные не обновлены, удаляемая запись имеет зависимости')
 
-    products = Product.objects.all().order_by('id_product')
     brands = Brand.objects.all().order_by('id_brand')
     commercial_organizations = CommercialOrganization.objects.all().order_by('id_commercial_organization')
     countries = Country.objects.all().order_by('id_country')
@@ -100,7 +117,7 @@ def product_table(request):
         data = {
             'id_product': product.id_product,
             'product_type': product.product_type,
-            'product_size': float(product.product_size.replace(",", ".")),
+            'product_size': product.product_size,
             'commercial_organization': product.fk_id_commercial_organization.organization_name,
             'brand': product.fk_id_brand.brand_name,
             'country': product.fk_id_country.country_name
