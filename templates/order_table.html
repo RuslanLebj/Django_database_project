@@ -8,7 +8,21 @@
                 <img src="{% static 'media/add_icon.png' %}" class="img-fluid" alt="Responsive image">
             </div>
         </button>
+        <!-- Кнопка отрытия модального окна фильтрации списка -->
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#filterModal">
+            <div style="width: 20px">
+                <img src="{% static 'media/filter_icon.png' %}" class="img-fluid" alt="Responsive image">
+            </div>
+        </button>
     </div>
+
+    <!-- В случае пустого списка -->
+    {% if products|length == 0 %}
+        <div class="d-flex justify-content-center mb-1 ">
+            <h2 class="text-muted">Записей не найдено :(</h2>
+        </div>
+    {% endif %}
+
     <table class="table">
         <thead>
         <tr>
@@ -141,4 +155,56 @@
             </div>
         </div>
     </div>
+
+    <!-- Модальное окно фильтрации списка -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Отфильтровать товары</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="m-2" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label>
+                            <p>Адрес доставки:</p>
+                            <input name="address">
+                        </label>
+                        <label>
+                            <p>Статус заказа:</p>
+                            <input type="checkbox" name="status">
+                        </label>
+                        <label>
+                            <p>Дата заказа:</p>
+                            <input type="date" name="date">
+                        </label>
+                        <label>
+                            <p>Клиент:</p>
+                            <select name="client">
+                                {% for client in clients %}
+                                    <option value="{{ client.id_client }}">
+                                        {{ client.client_surname }} {{ client.client_name }} {{ client.client_patronymic }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label>
+                            <p>Страна:</p>
+                            <select name="sales_point">
+                                {% for sales_point in sales_points %}
+                                    <option value="{{ sales_point.id_sales_point }}">
+                                        {{ sales_point.sales_point_address }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <input type="hidden" name="change_type" value="filter">
+                        <input type="submit" value="Отфильтровать"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

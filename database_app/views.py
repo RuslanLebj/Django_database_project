@@ -15,6 +15,7 @@ def index(request):
 # Брэнд
 def brand_table(request):
     brandForm = BrandForm()
+    brands = Brand.objects.all().order_by('id_brand')
 
     if request.method == "POST":
         if request.POST.get('change_type') == "edit":
@@ -34,7 +35,6 @@ def brand_table(request):
             except IntegrityError as e:
                 messages.warning(request, 'Данные не обновлены, удаляемая запись имеет зависимости')
 
-    brands = Brand.objects.all().order_by('id_brand')
     return render(request, 'brand_table.html',
                   {'brandForm': brandForm,
                    'brands': brands})
@@ -57,6 +57,9 @@ def add_brand(brand_name):
 def product_table(request):
     productForm = ProductForm()
     products = Product.objects.all().order_by('id_product')
+    brands = Brand.objects.all().order_by('id_brand')
+    commercial_organizations = CommercialOrganization.objects.all().order_by('id_commercial_organization')
+    countries = Country.objects.all().order_by('id_country')
 
     if request.method == "POST":
         if request.POST.get('change_type') == "filter":
@@ -107,9 +110,6 @@ def product_table(request):
             except IntegrityError as e:
                 messages.warning(request, 'Данные не обновлены, удаляемая запись имеет зависимости')
 
-    brands = Brand.objects.all().order_by('id_brand')
-    commercial_organizations = CommercialOrganization.objects.all().order_by('id_commercial_organization')
-    countries = Country.objects.all().order_by('id_country')
 
     # Созадим словарь для хранения записей моделей с замененными внешними ключами на другие данные дочерней модели
     products_with_related_data = []
@@ -163,6 +163,7 @@ def add_product(product_type, product_size, fk_id_commercial_organization, fk_id
 # Страна
 def country_table(request):
     countryForm = CountryForm()
+    countries = Country.objects.all().order_by('id_country')
 
     if request.method == "POST":
         if request.POST.get('change_type') == "edit":
@@ -182,7 +183,6 @@ def country_table(request):
             except IntegrityError as e:
                 messages.warning(request, f'Данные не обновлены, удаляемая запись имеет зависимости')
 
-    countries = Country.objects.all().order_by('id_country')
     return render(request, 'country_table.html',
                   {'countryForm': countryForm,
                    'countries': countries})
@@ -204,6 +204,7 @@ def add_country(country_name):
 # Форма учреждения
 def establishment_form_table(request):
     establishment_formForm = EstablishmentFormForm()
+    establishment_forms = EstablishmentForm.objects.all().order_by('id_establishment_form')
 
     if request.method == "POST":
         if request.POST.get('change_type') == "edit":
@@ -221,7 +222,6 @@ def establishment_form_table(request):
             except IntegrityError as e:
                 messages.warning(request, f'Данные не обновлены, удаляемая запись имеет зависимости')
 
-    establishment_forms = EstablishmentForm.objects.all().order_by('id_establishment_form')
     return render(request, 'establishment_form_table.html',
                   {'establishment_formForm': establishment_formForm,
                    'establishment_forms': establishment_forms})
@@ -243,6 +243,7 @@ def add_establishment_form(form_name):
 # Клиент
 def client_table(request):
     clientForm = ClientForm()
+    clients = Client.objects.all().order_by('id_client')
 
     if request.method == "POST":
         if request.POST.get('change_type') == "edit":
@@ -271,7 +272,6 @@ def client_table(request):
             except IntegrityError as e:
                 messages.warning(request, f'Данные не обновлены, удаляемая запись имеет зависимости')
 
-    clients = Client.objects.all().order_by('id_client')
     return render(request, 'client_table.html',
                   {'clientForm': clientForm,
                    'clients': clients})
@@ -298,6 +298,8 @@ def add_client(client_name, client_surname, client_patronymic, client_birth, cli
 # Коммерческая организация
 def commercial_organization_table(request):
     commercial_organizationForm = CommercialOrganizationForm()
+    commercial_organizations = CommercialOrganization.objects.all().order_by('id_commercial_organization')
+    establishment_forms = EstablishmentForm.objects.all().order_by('id_establishment_form')
 
     if request.method == "POST":
         if request.POST.get('change_type') == "edit":
@@ -324,9 +326,6 @@ def commercial_organization_table(request):
                 messages.success(request, 'Данные обновлены')
             except IntegrityError as e:
                 messages.warning(request, 'Данные не обновлены, удаляемая запись имеет зависимости')
-
-    commercial_organizations = CommercialOrganization.objects.all().order_by('id_commercial_organization')
-    establishment_forms = EstablishmentForm.objects.all().order_by('id_establishment_form')
 
     # Созадим словарь для хранения записей моделей с замененными внешними ключами на другие данные дочерней модели
     commercial_organizations_with_related_data = []
@@ -369,6 +368,9 @@ def add_commercial_organization(organization_name, link, tin, fk_id_establishmen
 # Заказ
 def order_table(request):
     orderForm = OrderForm()
+    orders = Order.objects.all().order_by('id_order')
+    clients = Client.objects.all().order_by('id_client')
+    sales_points = SalesPoint.objects.all().order_by('id_sales_point')
 
     if request.method == "POST":
         if request.POST.get('change_type') == "edit":
@@ -396,10 +398,6 @@ def order_table(request):
                 messages.success(request, 'Данные обновлены')
             except IntegrityError as e:
                 messages.warning(request, 'Данные не обновлены, удаляемая запись имеет зависимости')
-
-    orders = Order.objects.all().order_by('id_order')
-    clients = Client.objects.all().order_by('id_client')
-    sales_points = SalesPoint.objects.all().order_by('id_sales_point')
 
     # Созадим словарь для хранения записей моделей с замененными внешними ключами на другие данные дочерней модели
     orders_with_related_data = []
