@@ -56,12 +56,12 @@
                                 {% csrf_token %}
                                 <label>
                                     <p>Тип товара:</p>
-                                    <input required name="type" value={{ product.product_type }}>
+                                    <input required name="type" value="{{ product.product_type }}">
                                 </label>
                                 <label>
                                     <p>Размер товара:</p>
                                     <input required type="number" step="any" name="size"
-                                           value={{ product.product_size }}>
+                                           value="{{ product.product_size }}">
                                 </label>
                                 <label>
                                     <p>Коммерческая организация:</p>

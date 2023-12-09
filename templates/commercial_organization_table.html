@@ -39,15 +39,15 @@
                                 {% csrf_token %}
                                 <label>
                                     <p>Название:</p>
-                                    <input required name="name" value={{ commercial_organization.organization_name }}>
+                                    <input required name="name" value="{{ commercial_organization.organization_name }}">
                                 </label>
                                 <label>
                                     <p>Ссылка:</p>
-                                    <input required name="link" value={{ commercial_organization.link }}>
+                                    <input required name="link" value="{{ commercial_organization.link }}">
                                 </label>
                                 <label>
                                     <p>ИНН:</p>
-                                    <input required name="tin" value={{ commercial_organization.tin }}>
+                                    <input required name="tin" value="{{ commercial_organization.tin }}">
                                 </label>
                                 <label>
                                     <p>Форма учреждения:</p>

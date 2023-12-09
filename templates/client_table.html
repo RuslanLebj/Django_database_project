@@ -42,15 +42,15 @@
                                 {% csrf_token %}
                                 <label>
                                     <p>Имя:</p>
-                                    <input required name="name" value={{ client.client_name }}>
+                                    <input required name="name" value="{{ client.client_name }}">
                                 </label>
                                 <label>
                                     <p>Фамилия:</p>
-                                    <input required name="surname" value={{ client.client_surname }}>
+                                    <input required name="surname" value="{{ client.client_surname }}">
                                 </label>
                                 <label>
                                     <p>Отчество:</p>
-                                    <input required name="patronymic" value={{ client.client_patronymic }}>
+                                    <input required name="patronymic" value="{{ client.client_patronymic }}">
                                 </label>
                                 <label>
                                     <p>Дата рождения:</p>
@@ -59,7 +59,7 @@
                                 </label>
                                 <label>
                                     <p>Номер телефона:</p>
-                                    <input required name="phone" value={{ client.client_phone }}>
+                                    <input required name="phone" value="{{ client.client_phone }}">
                                 </label>
                                 <input type="hidden" name="id" value={{ client.id_client }}>
                                 <input type="hidden" name="change_type" value="edit">

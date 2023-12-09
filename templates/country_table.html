@@ -34,7 +34,7 @@
                                 {% csrf_token %}
                                 <label>
                                     <p>Название:</p>
-                                    <input required name="name" value={{ country.country_name }}>
+                                    <input required name="name" value="{{ country.country_name }}">
                                 </label>
                                 <input type="hidden" name="id" value={{ country.id_country }}>
                                 <input type="hidden" name="change_type" value="edit">
