@@ -18,10 +18,10 @@
         <ul class="list-unstyled ps-0">
             <li class="mb-1">
                 <button class="btn btn-toggle align-items-center rounded collapsed " data-bs-toggle="collapse"
-                        data-bs-target="#home-collapse" aria-expanded="false">
+                        data-bs-target="#tables-collapse" aria-expanded="false">
                     Таблицы
                 </button>
-                <div class="collapse" id="home-collapse">
+                <div class="collapse" id="tables-collapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                         <li><a href="{% url 'brand_table' %}" class="link-dark rounded">Брэнды</a></li>
                         <li><a href="{% url 'client_table' %}" class="link-dark rounded">Клиенты</a></li>
@@ -32,6 +32,18 @@
                             учреждения</a></li>
                         <li><a href="{% url 'order_table' %}" class="link-dark rounded">Заказы</a></li>
                         <li><a href="{% url 'product_table' %}" class="link-dark rounded">Товары</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="mb-1">
+                <button class="btn btn-toggle align-items-center rounded collapsed " data-bs-toggle="collapse"
+                        data-bs-target="#reports-collapse" aria-expanded="false">
+                    Отчеты
+                </button>
+                <div class="collapse" id="reports-collapse">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                        <li><a href="{% url 'clients_total_receipt_price_report' %}" class="link-dark rounded">Общая
+                            сумма, потраченная каждым клиентом</a></li>
                     </ul>
                 </div>
             </li>

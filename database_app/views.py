@@ -6,6 +6,8 @@ from .forms import BrandForm, ProductForm, CountryForm, EstablishmentFormForm, C
     OrderForm, ReceiptForm, SalesPointForm
 from django.contrib import messages
 from django.db import IntegrityError
+from django.db.models import Sum
+from openpyxl import Workbook
 
 
 def index(request):
@@ -109,7 +111,6 @@ def product_table(request):
                 messages.success(request, 'Данные обновлены')
             except IntegrityError as e:
                 messages.warning(request, 'Данные не обновлены, удаляемая запись имеет зависимости')
-
 
     # Созадим словарь для хранения записей моделей с замененными внешними ключами на другие данные дочерней модели
     products_with_related_data = []
@@ -439,3 +440,45 @@ def add_order(order_address, order_status, order_date, fk_id_client, fk_id_sales
                   fk_id_client=Client.objects.get(id_client=fk_id_client),
                   fk_id_sales_point=SalesPoint.objects.get(id_sales_point=fk_id_sales_point))
     order.save()
+
+
+def clients_total_receipt_price_report(request):
+    # Получаем общую сумму заказов для каждого клиента
+    clients_total_receipt_price = Client.objects.annotate(
+        total_receipts_price=Sum('order__receipt__receipt_product_price'))
+    # Добавляем выборочные значения в список
+    clients_total_receipt_price_list = []
+    for client in clients_total_receipt_price:
+        clients_data = {
+            "name": client.client_name,
+            "surname": client.client_surname,
+            "patronymic": client.client_patronymic,
+            "total_price": client.total_receipts_price.replace('?', '')
+            if client.total_receipts_price is not None else 0
+        }
+        clients_total_receipt_price_list.append(clients_data)
+
+    if request.method == "POST":
+        # Создание нового документа Excel
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = 'Данные'
+
+        # Запись заголовков столбцов на первую строку
+        headers = list(clients_total_receipt_price_list[0].keys())
+        for col, header in enumerate(headers, start=1):
+            sheet.cell(row=1, column=col).value = header
+
+        # Запись данных из списка словарей в таблицу
+        for row, data in enumerate(clients_total_receipt_price_list, start=2):
+            for col, key in enumerate(data, start=1):
+                sheet.cell(row=row, column=col).value = data[key]
+
+        # Настройка HTTP-ответа для скачивания Excel-файла
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="clients_total_receipt_price_report.xlsx"'
+        # Сохранение созданного Excel-файла в HTTP-ответе
+        workbook.save(response)
+        return response
+
+    return render(request, 'clients_total_receipt_price_report.html', {'clients': clients_total_receipt_price_list})

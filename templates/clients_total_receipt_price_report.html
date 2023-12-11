@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="m-2">
+        <h5 class="text-muted">Общая сумма, потраченная каждым клиентом</h5>
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#fileModal">
+            <div style="width: 20px">
+                <img src="{% static 'media/save_file_icon.png' %}" class="img-fluid" alt="Responsive image">
+            </div>
+        </button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Клиент</th>
+            <th scope="col">Cумма(₽)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            <tr>
+                <td>{{ client.surname }} {{ client.name }} {{ client.patronymic }}</td>
+                <td>{{ client.total_price }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fileModalLabel">Скачать отчет в формате Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="m-2" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="submit" value="Скачать"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
