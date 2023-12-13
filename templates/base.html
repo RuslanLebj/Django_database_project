@@ -106,20 +106,6 @@
 
 {% bootstrap_javascript %} <!-- Подключение JavaScript Bootstrap -->
 <script src="{% static 'scripts/script.js' %}"></script>
-<!-- Скрипт установки таймера уведомления -->
-<script>
-    // Показать уведомление при загрузке страницы, если оно есть
-    window.onload = function () {
-        var notification = document.getElementById('notification');
-        if (notification !== null && notification.innerText.trim() !== "") {
-            notification.style.display = 'block';
-            // Установить таймер на скрытие уведомления через 3 секунды (3000 миллисекунд)
-            setTimeout(function () {
-                notification.style.display = 'none';
-            }, 3000);
-        }
-    };
-</script>
 
 </body>
 </html>

@@ -554,20 +554,7 @@ def clients_total_receipt_price_report(request):
         clients_total_receipt_price_list.append(clients_data)
 
     if request.method == "POST":
-        # Создание нового документа Excel
-        workbook = Workbook()
-        sheet = workbook.active
-        sheet.title = 'Данные'
-
-        # Запись заголовков столбцов на первую строку
-        headers = list(clients_total_receipt_price_list[0].keys())
-        for col, header in enumerate(headers, start=1):
-            sheet.cell(row=1, column=col).value = header
-
-        # Запись данных из списка словарей в таблицу
-        for row, data in enumerate(clients_total_receipt_price_list, start=2):
-            for col, key in enumerate(data, start=1):
-                sheet.cell(row=row, column=col).value = data[key]
+        workbook = get_excel_workbook(clients_total_receipt_price_list)
 
         # Настройка HTTP-ответа для скачивания Excel-файла
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -579,12 +566,47 @@ def clients_total_receipt_price_report(request):
     return render(request, 'clients_total_receipt_price_report.html', {'clients': clients_total_receipt_price_list})
 
 
+def get_excel_workbook(objects_list):
+    # Создание нового документа Excel
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = 'Данные'
+
+    # Запись заголовков столбцов на первую строку
+    headers = list(objects_list[0].keys())
+    for col, header in enumerate(headers, start=1):
+        sheet.cell(row=1, column=col).value = header
+
+    # Запись данных из списка словарей в таблицу
+    for row, data in enumerate(objects_list, start=2):
+        for col, key in enumerate(data, start=1):
+            sheet.cell(row=row, column=col).value = data[key]
+    return workbook
+
+
 def organizations_total_delivered_orders_report(request):
     # Получение количества доставленных заказов для каждой CommercialOrganization
-    organizations_delivered_list = CommercialOrganization.objects.annotate(
-        organizations_orders=Count('salespoint__order', filter=Q(salespoint__order__order_status=True))
+    organizations_delivered_orders = CommercialOrganization.objects.annotate(
+        delivered_orders_count=Count('salespoint__order', filter=Q(salespoint__order__order_status=True))
     ).values('organization_name', 'delivered_orders_count')
 
+    organizations_delivered_list = []
+    for organization in organizations_delivered_orders:
+        organization_data = {
+            "name": organization['organization_name'],
+            "delivered_orders_amount": organization['delivered_orders_count']
+        }
+        organizations_delivered_list.append(organization_data)
 
+    if request.method == "POST":
+        workbook = get_excel_workbook(organizations_delivered_list)
 
-    return render(request, 'rganizations_total_delivered_orders_report.html', {'organizations': organizations_delivered_list})
+        # Настройка HTTP-ответа для скачивания Excel-файла
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="organizations_delivered_list.xlsx"'
+        # Сохранение созданного Excel-файла в HTTP-ответе
+        workbook.save(response)
+        return response
+
+    return render(request, 'organizations_total_delivered_orders_report.html',
+                  {'organizations': organizations_delivered_list})

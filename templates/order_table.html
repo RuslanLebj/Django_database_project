@@ -129,7 +129,7 @@
                                 <p>Удалить запись?</p>
                                 <input type="hidden" name="id" value={{ order.id_order }}>
                                 <input type="hidden" name="change_type" value="delete">
-                                <input type="submit" value="Удалить"/>
+                                <input type="submit" value="Удалить" class="btn btn-outline-danger">
                             </form>
                         </li>
                     </ul>
@@ -151,7 +151,7 @@
                         {% csrf_token %}
                         {{ orderForm.as_p }}
                         <input type="hidden" name="change_type" value="add">
-                        <input type="submit" value="Добавить"/>
+                        <input type="submit" value="Добавить" class="btn btn-outline-success">
                     </form>
                 </div>
             </div>
@@ -220,7 +220,7 @@
                             </label>
                         </div>
                         <input type="hidden" name="change_type" value="filter">
-                        <input type="submit" value="Отфильтровать"/>
+                        <input type="submit" value="Отфильтровать" class="btn btn-outline-success">
                     </form>
                 </div>
             </div>

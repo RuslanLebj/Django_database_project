@@ -63,7 +63,7 @@
                                 <p>Удалить запись?</p>
                                 <input type="hidden" name="id" value="{{ establishment_form.id_establishment_form }}">
                                 <input type="hidden" name="change_type" value="delete">
-                                <input type="submit" value="Удалить"/>
+                                <input type="submit" value="Удалить" class="btn btn-outline-danger">
                             </form>
                         </li>
                     </ul>
@@ -85,7 +85,7 @@
                         {% csrf_token %}
                         {{ establishment_formForm.as_p }}
                         <input type="hidden" name="change_type" value="add">
-                        <input type="submit" value="Добавить"/>
+                        <input type="submit" value="Добавить" class="btn btn-outline-success">
                     </form>
                 </div>
             </div>
