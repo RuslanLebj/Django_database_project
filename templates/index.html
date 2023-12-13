@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
     <div class="mb-3">
-        <h4>Приложение для работы с данными коммерческих организаций</h4>
+        <h4>Приложение для работы с данными коммерческих организаций по продаже одежды</h4>
         <i class="fa-brands fa-github"></i>
         <a class="git-link link-dark" href="https://github.com/RuslanLebj/Django_database_project">GitHub проекта</a>
+        <div class="d-flex justify-content-around image-container mt-5">
+            <img src="{% static 'media/chick.png' %}" alt="chick">
+            <img src="{% static 'media/panda.png' %}" alt="panda">
+            <img src="{% static 'media/plant-pot.png' %}" alt="plant-pot">
+            <img src="{% static 'media/rose.png' %}" alt="rose">
+        </div>
     </div>
 {% endblock %}
 

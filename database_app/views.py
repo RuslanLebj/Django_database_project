@@ -7,6 +7,7 @@ from .forms import BrandForm, ProductForm, CountryForm, EstablishmentFormForm, C
 from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Sum
+from django.db.models import Count, Q
 from openpyxl import Workbook
 
 
@@ -460,6 +461,82 @@ def add_order(order_address, order_status, order_date, fk_id_client, fk_id_sales
     order.save()
 
 
+# Чек
+def receipt_table(request):
+    receiptForm = ReceiptForm()
+    receipts = Receipt.objects.all().order_by('id_receipt')
+    orders = Order.objects.all().order_by('id_order')
+    products = Product.objects.all().order_by('id_product')
+    if request.method == "POST":
+        if request.POST.get('change_type') == "filter":
+            filter_receipt_product_amount = request.POST.get('amount')
+            print(filter_receipt_product_amount)
+            filter_receipt_product_price = request.POST.get('price')
+            print(filter_receipt_product_price)
+            filter_fk_id_order = request.POST.get('order')
+            print(filter_fk_id_order)
+            filter_fk_id_product = request.POST.get('product')
+            print(filter_fk_id_product)
+            if filter_receipt_product_amount != "":
+                receipts = receipts.filter(receipt_product_amount=filter_receipt_product_amount)
+            if filter_receipt_product_price != "":
+                receipts = receipts.filter(receipt_product_price=filter_receipt_product_price)
+            if filter_fk_id_product != "":
+                receipts = receipts.filter(fk_id_product=filter_fk_id_product)
+            if filter_fk_id_order != "":
+                receipts = receipts.filter(fk_id_order=filter_fk_id_order)
+            messages.success(request, 'Данные отфильтрованы')
+        elif request.POST.get('change_type') == "edit":
+            id_receipt = request.POST.get('id')
+            new_receipt_product_amount = request.POST.get('amount')
+            new_receipt_product_price = request.POST.get('price')
+            new_fk_id_order = request.POST.get('order')
+            new_fk_id_product = request.POST.get('product')
+            edit_receipt(id_receipt, new_receipt_product_amount, new_receipt_product_price, new_fk_id_order,
+                         new_fk_id_product)
+            messages.success(request, 'Данные обновлены')
+        elif request.POST.get('change_type') == "add":
+            new_receipt_product_amount = request.POST.get('amount')
+            new_receipt_product_price = request.POST.get('price')
+            new_fk_id_order = request.POST.get('order')
+            new_fk_id_product = request.POST.get('product')
+            add_receipt(new_receipt_product_amount, new_receipt_product_price, new_fk_id_order, new_fk_id_product)
+            messages.success(request, 'Данные обновлены')
+        else:
+            try:
+                id_receipt = request.POST.get('id')
+                delete_receipt(id_receipt)
+                messages.success(request, 'Данные обновлены')
+            except IntegrityError as e:
+                messages.warning(request, 'Данные не обновлены, удаляемая запись имеет зависимости')
+
+    return render(request, 'receipt_table.html',
+                  {'receiptForm': receiptForm,
+                   'receipts': receipts,
+                   'orders': orders,
+                   'products': products})
+
+
+def edit_receipt(id_receipt, receipt_product_amount, receipt_product_price, fk_id_order, fk_id_product):
+    Receipt.objects.filter(id_receipt=id_receipt).update(
+        receipt_product_amount=receipt_product_amount,
+        receipt_product_price=receipt_product_price,
+        fk_id_order=Order.objects.get(id_order=fk_id_order),
+        fk_id_product=Product.objects.get(id_product=fk_id_product))
+
+
+def delete_receipt(id_receipt):
+    Receipt.objects.filter(id_receipt=id_receipt).delete()
+
+
+def add_receipt(receipt_product_amount, receipt_product_price, fk_id_order, fk_id_product):
+    receipt = Receipt(receipt_product_amount=receipt_product_amount,
+                      receipt_product_price=receipt_product_price,
+                      fk_id_order=Order.objects.get(id_order=fk_id_order),
+                      fk_id_product=Product.objects.get(id_product=fk_id_product))
+    receipt.save()
+
+
 def clients_total_receipt_price_report(request):
     # Получаем общую сумму заказов для каждого клиента
     clients_total_receipt_price = Client.objects.annotate(
@@ -471,7 +548,7 @@ def clients_total_receipt_price_report(request):
             "name": client.client_name,
             "surname": client.client_surname,
             "patronymic": client.client_patronymic,
-            "total_price": client.total_receipts_price.replace('?', '')
+            "total_price": client.total_receipts_price
             if client.total_receipts_price is not None else 0
         }
         clients_total_receipt_price_list.append(clients_data)
@@ -500,3 +577,14 @@ def clients_total_receipt_price_report(request):
         return response
 
     return render(request, 'clients_total_receipt_price_report.html', {'clients': clients_total_receipt_price_list})
+
+
+def organizations_total_delivered_orders_report(request):
+    # Получение количества доставленных заказов для каждой CommercialOrganization
+    organizations_delivered_list = CommercialOrganization.objects.annotate(
+        organizations_orders=Count('salespoint__order', filter=Q(salespoint__order__order_status=True))
+    ).values('organization_name', 'delivered_orders_count')
+
+
+
+    return render(request, 'rganizations_total_delivered_orders_report.html', {'organizations': organizations_delivered_list})

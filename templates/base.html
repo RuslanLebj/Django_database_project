@@ -53,6 +53,9 @@
                         <li class="sidebar-item">
                             <a href="{% url 'product_table' %}" class="sidebar-link">Товары</a>
                         </li>
+                        <li class="sidebar-item">
+                            <a href="{% url 'receipt_table' %}" class="sidebar-link">Чеки</a>
+                        </li>
                     </ul>
                 </li>
                 <li class="sidebar-item">
@@ -65,6 +68,9 @@
                         <li class="sidebar-item">
                             <a href="{% url 'clients_total_receipt_price_report' %}" class="sidebar-link">Общая
                                 сумма, потраченная каждым клиентом</a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{% url 'organizations_total_delivered_orders_report' %}" class="sidebar-link">Количество заказов доставленных каждой организацией</a>
                         </li>
                     </ul>
                 </li>

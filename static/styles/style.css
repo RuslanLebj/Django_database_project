@@ -17,7 +17,6 @@ body {
 }
 
 
-
 a {
     cursor: pointer;
     text-decoration: none;
@@ -117,8 +116,8 @@ a.sidebar-link {
 }
 
 .modal-content {
-  border: 2px solid gray; /* Добавление обводки */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Добавление тени */
+    border: 2px solid gray; /* Добавление обводки */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Добавление тени */
 }
 
 .tables-container {
@@ -130,9 +129,16 @@ a.sidebar-link {
     justify-content: flex-end;
 }
 
+
+.image-container img {
+    max-width: 100px; /* Ширина изображения */
+    height: auto; /* Поддержание пропорций */
+}
+
+
 /* Responsive */
 
-@media (min-width:768px) {
+@media (min-width: 768px) {
     .content {
         width: auto;
     }

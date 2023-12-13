@@ -90,7 +90,7 @@ class Product(models.Model):
 class Receipt(models.Model):
     id_receipt = models.AutoField(primary_key=True)
     receipt_product_amount = models.SmallIntegerField(blank=True, null=True)
-    receipt_product_price = models.TextField(blank=True, null=True)  # This field type is a guess.
+    receipt_product_price = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     fk_id_order = models.ForeignKey(Order, models.DO_NOTHING, db_column='fk_id_order', blank=True, null=True)
     fk_id_product = models.ForeignKey(Product, models.DO_NOTHING, db_column='fk_id_product', blank=True, null=True)
 

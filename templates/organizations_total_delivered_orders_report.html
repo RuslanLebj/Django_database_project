@@ -3,7 +3,7 @@
 {% block content %}
 
     <div class="m-2">
-        <h5 class="text-muted">Общая сумма, потраченная каждым клиентом</h5>
+        <h5 class="text-muted">Количество заказов доставленных каждой организацией</h5>
         <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#fileModal">
             <div style="width: 20px">
                 <i class="fa-solid fa-floppy-disk"></i>
@@ -13,12 +13,12 @@
     <table class="table">
         <thead>
         <tr>
-            <th scope="col">Клиент</th>
-            <th scope="col">Cумма(₽)</th>
+            <th scope="col">Организация</th>
+            <th scope="col">Количество доставленных заказов</th>
         </tr>
         </thead>
         <tbody>
-        {% for client in clients %}
+        {% for organization in organizations %}
             <tr>
                 <td>{{ client.surname }} {{ client.name }} {{ client.patronymic }}</td>
                 <td>{{ client.total_price }}</td>

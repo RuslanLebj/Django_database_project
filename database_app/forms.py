@@ -92,8 +92,8 @@ class ProductForm(forms.Form):
 
 
 class ReceiptForm(forms.Form):
-    product_amount = forms.DecimalField(label="Количество товара")
-    product_price = forms.CharField(label="Цена")
+    amount = forms.IntegerField(label="Количество товара")
+    price = forms.FloatField(label="Цена", widget=forms.NumberInput(attrs={'step': 'any'}))
     order = CustomModelChoiceField(
         queryset=Order.objects.all(),
         label_field="order_date",

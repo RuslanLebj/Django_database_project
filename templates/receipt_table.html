@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="menu-container m-2">
+        <h5 class="text-muted col-md-6 ">Чеки</h5>
+        <div>
+            <button type="button" class="btn add-button" data-bs-toggle="modal" data-bs-target="#addModal">
+                <div style="width: 20px">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </button>
+            <button type="button" class="btn filter-button" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <div style="width: 20px">
+                    <i class="fa-solid fa-filter"></i>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- В случае пустого списка -->
+    {% if receipts|length == 0 %}
+        <div class="d-flex justify-content-center mb-1 ">
+            <h2 class="text-muted">Записей не найдено :(</h2>
+        </div>
+    {% endif %}
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Количество товара</th>
+            <th scope="col">Сумма заказа(₽)</th>
+            <th scope="col">Заказ</th>
+            <th scope="col">Товар</th>
+            <th scope="col" class="col-1"></th>
+            <th scope="col" class="col-1"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for receipt in receipts %}
+            <tr>
+                <td>{{ receipt.receipt_product_amount }}</td>
+                <td>{{ receipt.receipt_product_price }}</td>
+                <td>{{ receipt.fk_id_order.order_date }}</td>
+                <td>{{ receipt.fk_id_product.product_type }}</td>
+                <td>
+                    <button type="button" class="btn edit-button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div style="width: 20px">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="m-2" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <label>
+                                    <p>Количество товара:</p>
+                                    <input required type="number" name="amount"
+                                           value={{ receipt.receipt_product_amount }}>
+                                </label>
+                                <label>
+                                    <p>Сумма заказа:</p>
+                                    <input required type="number" step="any" name="price"
+                                           value={{ receipt.receipt_product_price }}>
+                                </label>
+                                <label>
+                                    <p>Заказ:</p>
+                                    <select required name="order">
+                                        {% for order in orders %}
+                                            {% if order.order_date == receipt.fk_id_order.order_date %}
+                                                <option selected value="{{ order.id_order }}">
+                                                    {{ order.order_date }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ order.id_order }}">
+                                                    {{ order.order_date }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                                <label>
+                                    <p>Товар:</p>
+                                    <select required name="product">
+                                        {% for product in products %}
+                                            {% if product.product_type == receipt.fk_id_product.product_type %}
+                                                <option selected value="{{ product.id_product }}">
+                                                    {{ product.product_type }}
+                                                </option>
+                                            {% else %}
+                                                <option value="{{ product.id_product }}">
+                                                    {{ product.product_type }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                                <input type="hidden" name="id" value={{ receipt.id_receipt }}>
+                                <input type="hidden" name="change_type" value="edit">
+                                <input type="submit" value="Изменить"/>
+                            </form>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <button type="button" class="btn delete-button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div style="width: 20px">
+                            <i class="fa-solid fa-trash"></i>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <form class="m-2" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <p>Удалить запись?</p>
+                                <input type="hidden" name="id" value={{ receipt.id_receipt }}>
+                                <input type="hidden" name="change_type" value="delete">
+                                <input type="submit" value="Удалить"/>
+                            </form>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Добавить заказ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="m-2" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ receiptForm.as_p }}
+                        <input type="hidden" name="change_type" value="add">
+                        <input type="submit" value="Добавить"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно фильтрации списка -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Отфильтровать заказы</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="m-2" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="m-3">
+                            <label>
+                                Количество товара:
+                                <input type="number" name="amount">
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                <p>Сумма заказа:</p>
+                                <input type="number" step="any" name="price">
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                Заказ:
+                                <select name="order">
+                                    <option value=""></option>
+                                    {% for order in orders %}
+                                        <option value="{{ order.id_order }}">
+                                            {{ order.order_date }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                Товар:
+                                <select name="product">
+                                    <option value=""></option>
+                                    {% for product in products %}
+                                        <option value="{{ product.id_product }}">
+                                            {{ product.product_type }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                        <input type="hidden" name="change_type" value="filter">
+                        <input type="submit" value="Отфильтровать"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
