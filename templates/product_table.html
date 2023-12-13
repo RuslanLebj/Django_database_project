@@ -1,28 +1,29 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="m-2">
-        <h5 class="text-muted">Товары</h5>
-        <!-- Кнопка отрытия модального окна добавления записи -->
-        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addModal">
-            <div style="width: 20px">
-                <img src="{% static 'media/add_icon.png' %}" class="img-fluid" alt="Responsive image">
-            </div>
-        </button>
-        <!-- Кнопка отрытия модального окна фильтрации списка -->
-        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#filterModal">
-            <div style="width: 20px">
-                <img src="{% static 'media/filter_icon.png' %}" class="img-fluid" alt="Responsive image">
-            </div>
-        </button>
+
+    <div class="menu-container m-2">
+        <h5 class="text-muted col-md-6 ">Товары</h5>
+        <div>
+            <button type="button" class="btn add-button" data-bs-toggle="modal" data-bs-target="#addModal">
+                <div style="width: 20px">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </button>
+            <button type="button" class="btn filter-button" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <div style="width: 20px">
+                    <i class="fa-solid fa-filter"></i>
+                </div>
+            </button>
+        </div>
     </div>
 
     <!-- В случае пустого списка -->
-        {% if products|length == 0 %}
-            <div class="d-flex justify-content-center mb-1 ">
-                <h2 class="text-muted">Записей не найдено :(</h2>
-            </div>
-        {% endif %}
+    {% if products|length == 0 %}
+        <div class="d-flex justify-content-center mb-1 ">
+            <h2 class="text-muted">Записей не найдено :(</h2>
+        </div>
+    {% endif %}
 
     <table class="table">
         <thead>
@@ -32,8 +33,8 @@
             <th scope="col">Коммерческая организация</th>
             <th scope="col">Брэнд</th>
             <th scope="col">Страна</th>
-            <th scope="col">Изменить</th>
-            <th scope="col">Удалить</th>
+            <th scope="col" class="col-1"></th>
+            <th scope="col" class="col-1"></th>
         </tr>
         </thead>
         <tbody>
@@ -45,9 +46,9 @@
                 <td>{{ product.brand }}</td>
                 <td>{{ product.country }}</td>
                 <td>
-                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn edit-button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div style="width: 20px">
-                            <img src="{% static 'media/edit_icon.png' %}" class="img-fluid" alt="Responsive image">
+                            <i class="fa-solid fa-pen-to-square"></i>
                         </div>
                     </button>
                     <ul class="dropdown-menu">
@@ -119,9 +120,9 @@
                     </ul>
                 </td>
                 <td>
-                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn delete-button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div style="width: 20px">
-                            <img src="{% static 'media/delete_icon.png' %}" class="img-fluid" alt="Responsive image">
+                            <i class="fa-solid fa-trash"></i>
                         </div>
                     </button>
                     <ul class="dropdown-menu">
@@ -172,47 +173,57 @@
                 <div class="modal-body">
                     <form class="m-2" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <label>
-                            <p>Тип товара:</p>
-                            <input name="type">
-                        </label>
-                        <label>
-                            <p>Размер товара:</p>
-                            <input type="number" step="any" name="size">
-                        </label>
-                        <label>
-                            <p>Коммерческая организация:</p>
-                            <select name="commercial_organization">
-                                <option value=""></option>
-                                {% for organization in commercial_organizations %}
-                                    <option value="{{ organization.id_commercial_organization }}">
-                                        {{ organization.organization_name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </label>
-                        <label>
-                            <p>Брэнд:</p>
-                            <select name="brand">
-                                <option value=""></option>
-                                {% for brand in brands %}
-                                    <option value="{{ brand.id_brand }}">
-                                        {{ brand.brand_name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </label>
-                        <label>
-                            <p>Страна:</p>
-                            <select name="country">
-                                <option value=""></option>
-                                {% for country in countries %}
-                                    <option value="{{ country.id_country }}">
-                                        {{ country.country_name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </label>
+                        <div class="m-3">
+                            <label>
+                                Тип товара:
+                                <input name="type">
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                <p>Размер товара:</p>
+                                <input type="number" step="any" name="size">
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                Коммерческая организация:
+                                <select name="commercial_organization">
+                                    <option value=""></option>
+                                    {% for organization in commercial_organizations %}
+                                        <option value="{{ organization.id_commercial_organization }}">
+                                            {{ organization.organization_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                Брэнд:
+                                <select name="brand">
+                                    <option value=""></option>
+                                    {% for brand in brands %}
+                                        <option value="{{ brand.id_brand }}">
+                                            {{ brand.brand_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                Страна:
+                                <select name="country">
+                                    <option value=""></option>
+                                    {% for country in countries %}
+                                        <option value="{{ country.id_country }}">
+                                            {{ country.country_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
                         <input type="hidden" name="change_type" value="filter">
                         <input type="submit" value="Отфильтровать"/>
                     </form>

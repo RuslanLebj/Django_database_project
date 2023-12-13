@@ -1,21 +1,27 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
 
-    <div class="m-2">
-        <h5 class="text-muted">Брэнды</h5>
-        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addModal">
-            <div style="width: 20px">
-                <img src="{% static 'media/add_icon.png' %}" class="img-fluid" alt="Responsive image">
-            </div>
-        </button>
+    <div class="menu-container m-2">
+        <h5 class="text-muted col-md-6 ">Брэнды</h5>
+        <div>
+            <button type="button" class="btn add-button" data-bs-toggle="modal" data-bs-target="#addModal">
+                <div style="width: 20px">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </button>
+            <button type="button" class="btn filter-button" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <div style="width: 20px">
+                    <i class="fa-solid fa-filter"></i>
+                </div>
+            </button>
+        </div>
     </div>
     <table class="table">
         <thead>
         <tr>
             <th scope="col">Название</th>
-            <th scope="col">Изменить</th>
-            <th scope="col">Удалить</th>
+            <th scope="col" class="col-1"></th>
+            <th scope="col" class="col-1"></th>
         </tr>
         </thead>
         <tbody>
@@ -23,9 +29,9 @@
             <tr>
                 <td>{{ brand.brand_name }}</td>
                 <td>
-                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn edit-button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div style="width: 20px">
-                            <img src="{% static 'media/edit_icon.png' %}" class="img-fluid" alt="Responsive image">
+                            <i class="fa-solid fa-pen-to-square"></i>
                         </div>
                     </button>
                     <ul class="dropdown-menu">
@@ -38,15 +44,15 @@
                                 </label>
                                 <input type="hidden" name="id" value={{ brand.id_brand }}>
                                 <input type="hidden" name="change_type" value="edit">
-                                <input type="submit" value="Изменить"/>
+                                <input type="submit" value="Изменить" class="btn btn-outline-warning">
                             </form>
                         </li>
                     </ul>
                 </td>
                 <td>
-                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn delete-button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div style="width: 20px">
-                            <img src="{% static 'media/delete_icon.png' %}" class="img-fluid" alt="Responsive image">
+                            <i class="fa-solid fa-trash"></i>
                         </div>
                     </button>
                     <ul class="dropdown-menu">
@@ -56,7 +62,7 @@
                                 <p>Удалить запись?</p>
                                 <input type="hidden" name="id" value={{ brand.id_brand }}>
                                 <input type="hidden" name="change_type" value="delete">
-                                <input type="submit" value="Удалить"/>
+                                <input type="submit" value="Удалить" class="btn btn-outline-danger">
                             </form>
                         </li>
                     </ul>
@@ -78,7 +84,7 @@
                         {% csrf_token %}
                         {{ brandForm.as_p }}
                         <input type="hidden" name="change_type" value="add">
-                        <input type="submit" value="Добавить"/>
+                        <input type="submit" value="Добавить" class="btn btn-outline-success">
                     </form>
                 </div>
             </div>

@@ -1,13 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <div class="m-2">
-        <h5 class="text-muted">Коммерческие организации</h5>
-        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addModal">
-            <div style="width: 20px">
-                <img src="{% static 'media/add_icon.png' %}" class="img-fluid" alt="Responsive image">
-            </div>
-        </button>
+
+    <div class="menu-container m-2">
+        <h5 class="text-muted col-md-6 ">Коммерческие организации</h5>
+        <div>
+            <button type="button" class="btn add-button" data-bs-toggle="modal" data-bs-target="#addModal">
+                <div style="width: 20px">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </button>
+            <button type="button" class="btn filter-button" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <div style="width: 20px">
+                    <i class="fa-solid fa-filter"></i>
+                </div>
+            </button>
+        </div>
     </div>
     <table class="table">
         <thead>
@@ -16,8 +24,8 @@
             <th scope="col">Ссылка</th>
             <th scope="col">ИНН</th>
             <th scope="col">Форма учреждения</th>
-            <th scope="col">Изменить</th>
-            <th scope="col">Удалить</th>
+            <th scope="col" class="col-1"></th>
+            <th scope="col" class="col-1"></th>
         </tr>
         </thead>
         <tbody>
@@ -28,9 +36,9 @@
                 <td>{{ commercial_organization.tin }}</td>
                 <td>{{ commercial_organization.establishment_form }}</td>
                 <td>
-                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn edit-button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div style="width: 20px">
-                            <img src="{% static 'media/edit_icon.png' %}" class="img-fluid" alt="Responsive image">
+                            <i class="fa-solid fa-pen-to-square"></i>
                         </div>
                     </button>
                     <ul class="dropdown-menu">
@@ -74,9 +82,9 @@
                     </ul>
                 </td>
                 <td>
-                    <button type="button" class="btn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn delete-button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div style="width: 20px">
-                            <img src="{% static 'media/delete_icon.png' %}" class="img-fluid" alt="Responsive image">
+                            <i class="fa-solid fa-trash"></i>
                         </div>
                     </button>
                     <ul class="dropdown-menu">

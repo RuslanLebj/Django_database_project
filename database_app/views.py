@@ -374,7 +374,25 @@ def order_table(request):
     sales_points = SalesPoint.objects.all().order_by('id_sales_point')
 
     if request.method == "POST":
-        if request.POST.get('change_type') == "edit":
+        if request.POST.get('change_type') == "filter":
+            filter_order_address = request.POST.get('address')
+            filter_allow_order_status = True if (request.POST.get('allow_status') == 'on') else False
+            filter_order_status = True if (request.POST.get('status') == 'on') else False
+            filter_order_date = request.POST.get('date')
+            filter_fk_id_client = request.POST.get('client')
+            filter_fk_id_sales_point = request.POST.get('sales_point')
+            if filter_order_address != "":
+                orders = orders.filter(order_address=filter_order_address)
+            if filter_order_date != "":
+                orders = orders.filter(order_date=filter_order_date)
+            if filter_allow_order_status:
+                orders = orders.filter(order_status=filter_order_status)
+            if filter_fk_id_client != "":
+                orders = orders.filter(fk_id_client=filter_fk_id_client)
+            if filter_fk_id_sales_point != "":
+                orders = orders.filter(fk_id_sales_point=filter_fk_id_sales_point)
+            messages.success(request, 'Данные отфильтрованы')
+        elif request.POST.get('change_type') == "edit":
             id_order = request.POST.get('id')
             new_order_address = request.POST.get('address')
             new_order_status = True if (request.POST.get('status') == 'on') else False
