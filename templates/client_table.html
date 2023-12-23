@@ -70,7 +70,7 @@
                                 </label>
                                 <input type="hidden" name="id" value={{ client.id_client }}>
                                 <input type="hidden" name="change_type" value="edit">
-                                <input type="submit" value="Изменить"/>
+                                <input type="submit" value="Изменить" class="btn btn-outline-warning">
                             </form>
                         </li>
                     </ul>
@@ -88,7 +88,7 @@
                                 <p>Удалить запись?</p>
                                 <input type="hidden" name="id" value={{ client.id_client }}>
                                 <input type="hidden" name="change_type" value="delete">
-                                <input type="submit" value="Удалить"/>
+                                <input type="submit" value="Удалить" class="btn btn-outline-danger">
                             </form>
                         </li>
                     </ul>
@@ -111,6 +111,56 @@
                         {{ clientForm.as_p }}
                         <input type="hidden" name="change_type" value="add">
                         <input type="submit" value="Добавить" class="btn btn-outline-success">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно фильтрации списка -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Отфильтровать товары</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="m-2" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="m-3">
+                            <label>
+                                <p>Имя:</p>
+                                <input name="name" value="{{ client.client_name }}">
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                <p>Фамилия:</p>
+                                <input name="surname" value="{{ client.client_surname }}">
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                <p>Отчество:</p>
+                                <input name="patronymic" value="{{ client.client_patronymic }}">
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                <p>Дата рождения:</p>
+                                <input type="date" name="birth"
+                                       value={{ client.client_birth|date:'Y-m-d' }}>
+                            </label>
+                        </div>
+                        <div class="m-3">
+                            <label>
+                                <p>Номер телефона:</p>
+                                <input name="phone" value="{{ client.client_phone }}">
+                            </label>
+                        </div>
+                        <input type="hidden" name="change_type" value="filter">
+                        <input type="submit" value="Отфильтровать" class="btn btn-outline-success">
                     </form>
                 </div>
             </div>

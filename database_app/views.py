@@ -248,7 +248,24 @@ def client_table(request):
     clients = Client.objects.all().order_by('id_client')
 
     if request.method == "POST":
-        if request.POST.get('change_type') == "edit":
+        if request.POST.get('change_type') == "filter":
+            filter_client_name = request.POST.get('name')
+            filter_client_surname = request.POST.get('surname')
+            filter_client_patronymic = request.POST.get('patronymic')
+            filter_client_birth = request.POST.get('birth')
+            filter_client_phone = request.POST.get('phone')
+            if filter_client_name != "":
+                clients = clients.filter(client_name=filter_client_name)
+            if filter_client_surname != "":
+                clients = clients.filter(client_surname=filter_client_surname)
+            if filter_client_patronymic != "":
+                clients = clients.filter(client_patronymic=filter_client_patronymic)
+            if filter_client_birth != "":
+                clients = clients.filter(client_birth=filter_client_birth)
+            if filter_client_phone != "":
+                clients = clients.filter(client_phone=filter_client_phone)
+            messages.success(request, 'Данные отфильтрованы')
+        elif request.POST.get('change_type') == "edit":
             id_client = request.POST.get('id')
             new_client_name = request.POST.get('name')
             new_client_surname = request.POST.get('surname')
@@ -304,7 +321,22 @@ def commercial_organization_table(request):
     establishment_forms = EstablishmentForm.objects.all().order_by('id_establishment_form')
 
     if request.method == "POST":
-        if request.POST.get('change_type') == "edit":
+        if request.POST.get('change_type') == "filter":
+            filter_organization_name = request.POST.get('name')
+            filter_link = request.POST.get('link')
+            filter_tin = request.POST.get('tin')
+            filter_fk_id_establishment_form = request.POST.get('establishment_form')
+            if filter_organization_name != "":
+                commercial_organizations = commercial_organizations.filter(organization_name=filter_organization_name)
+            if filter_link != "":
+                commercial_organizations = commercial_organizations.filter(filter_link=filter_link)
+            if filter_tin != "":
+                commercial_organizations = commercial_organizations.filter(filter_tin=filter_tin)
+            if filter_fk_id_establishment_form != "":
+                commercial_organizations = commercial_organizations.filter(
+                    fk_id_establishment_form=filter_fk_id_establishment_form)
+            messages.success(request, 'Данные отфильтрованы')
+        elif request.POST.get('change_type') == "edit":
             id_commercial_organization = request.POST.get('id')
             new_organization_name = request.POST.get('name')
             new_link = request.POST.get('link')
@@ -535,6 +567,68 @@ def add_receipt(receipt_product_amount, receipt_product_price, fk_id_order, fk_i
                       fk_id_order=Order.objects.get(id_order=fk_id_order),
                       fk_id_product=Product.objects.get(id_product=fk_id_product))
     receipt.save()
+
+
+def sales_point_table(request):
+    sales_pointForm = SalesPointForm()
+    sales_points = SalesPoint.objects.all().order_by('id_sales_point')
+    commercial_organizations = CommercialOrganization.objects.all().order_by('id_commercial_organization')
+
+    if request.method == "POST":
+        if request.POST.get('change_type') == "filter":
+            filter_sales_point_address = request.POST.get('address')
+            filter_sales_point_name = request.POST.get('name')
+            filter_fk_id_commercial_organization = request.POST.get('commercial_organization')
+            if filter_sales_point_address != "":
+                sales_points = sales_points.filter(sales_point_address=filter_sales_point_address)
+            if filter_sales_point_name != "":
+                sales_points = sales_points.filter(sales_point_name=filter_sales_point_name)
+            if filter_fk_id_commercial_organization != "":
+                sales_points = sales_points.filter(fk_id_commercial_organization=filter_fk_id_commercial_organization)
+        elif request.POST.get('change_type') == "edit":
+            id_sales_point = request.POST.get('id')
+            new_sales_point_address = request.POST.get('address')
+            new_sales_point_name = request.POST.get('name')
+            new_fk_id_commercial_organization = request.POST.get('commercial_organization')
+            edit_sales_point(id_sales_point, new_sales_point_address, new_sales_point_name,
+                             new_fk_id_commercial_organization)
+            messages.success(request, 'Данные обновлены')
+        elif request.POST.get('change_type') == "add":
+            new_sales_point_address = request.POST.get('address')
+            new_sales_point_name = request.POST.get('name')
+            new_fk_id_commercial_organization = request.POST.get('commercial_organization')
+            add_sales_point(new_sales_point_address, new_sales_point_name, new_fk_id_commercial_organization)
+            messages.success(request, 'Данные обновлены')
+        else:
+            try:
+                id_sales_point = request.POST.get('id')
+                delete_sales_point(id_sales_point)
+                messages.success(request, 'Данные обновлены')
+            except IntegrityError as e:
+                messages.warning(request, 'Данные не обновлены, удаляемая запись имеет зависимости')
+    return render(request, 'sales_point_table.html',
+                  {'sales_pointForm': sales_pointForm,
+                   'sales_points': sales_points,
+                   'commercial_organizations': commercial_organizations})
+
+
+def edit_sales_point(id_sales_point, sales_point_address, sales_point_name, fk_id_commercial_organization):
+    SalesPoint.objects.filter(id_sales_point=id_sales_point).update(
+        sales_point_address=sales_point_address,
+        sales_point_name=sales_point_name,
+        fk_id_commercial_organization=fk_id_commercial_organization)
+
+
+def delete_sales_point(id_sales_point):
+    SalesPoint.objects.filter(id_sales_point=id_sales_point).delete()
+
+
+def add_sales_point(sales_point_address, sales_point_name, fk_id_commercial_organization):
+    sales_point = SalesPoint(sales_point_address=sales_point_address,
+                             sales_point_name=sales_point_name,
+                             fk_id_commercial_organization=CommercialOrganization.objects.get(
+                                 id_commercial_organization=fk_id_commercial_organization))
+    sales_point.save()
 
 
 def clients_total_receipt_price_report(request):
